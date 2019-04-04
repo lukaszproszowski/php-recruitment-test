@@ -37,4 +37,9 @@ class PageManager
         $statement->execute();
         return $this->database->lastInsertId();
     }
+
+    public function updatePageLastWarmDate($pageId, $date)
+    {
+        $this->database->prepare('UPDATE pages SET last_warm = ? WHERE page_id = ?')->execute([$date, $pageId]);
+    }
 }
