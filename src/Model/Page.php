@@ -9,11 +9,13 @@ class Page
     public $url;
     public $website_id;
     public $last_warm;
+    public $visits;
     
     public function __construct()
     {
         $this->website_id = intval($this->website_id);
         $this->page_id = intval($this->page_id);
+        $this->visits = intval($this->visits);
     }
 
     /**
@@ -46,6 +48,14 @@ class Page
     public function getLastWarm()
     {
         return $this->last_warm;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVisits()
+    {
+        return $this->visits;
     }
     
     

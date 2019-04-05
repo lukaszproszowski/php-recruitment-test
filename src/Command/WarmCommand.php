@@ -42,6 +42,7 @@ class WarmCommand
             foreach ($pages as $page) {
                 $warmer->warm($page->getUrl());
                 $this->pageManager->updatePageLastWarmDate($page->getPageId(), date('Y-m-d H:i:s'));
+                $this->pageManager->updatePageVisitsValue($page->getPageId(), $page->getVisits());
             }
         } else {
             $output->writeln('<error>Website with ID ' . $id . ' does not exists!</error>');
