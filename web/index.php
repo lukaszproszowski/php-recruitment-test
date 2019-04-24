@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(E_ALL);
 use Snowdog\DevTest\Component\Menu;
 use Snowdog\DevTest\Component\RouteRepository;
 

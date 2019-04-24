@@ -24,52 +24,181 @@
 
     <?php if (isset($_SESSION['flash'])): ?>
         <p class="bg-info"><?= $_SESSION['flash'] ?></p>
-        <?php unset($_SESSION['flash']) ?>
     <?php endif ?>
+
+    <div class="alert hide" id="alert"></div>
 
     <div>
 
-        <div class="padded">
-            <form class="form-inline" method="post" action="/varnish">
-                <div class="form-group">
-                    <label for="exampleInputName2">IP</label>
-                    <input type="text" name="ip" class="form-control" id="exampleInputName2"
-                           placeholder="192.168.0.1">
-                </div>
-                <button type="submit" class="btn btn-primary">Add Varnish</button>
-            </form>
-        </div>
+        <h1>Varnish Assignments</h1>
 
-        <div class="padded">
-            <h1>Varnish Assignments</h1>
-        </div>
-
-        <?php foreach ($this->getVarnishes() as $varnish): /** @var \Snowdog\DevTest\Model\Varnish $varnish */ ?>
-            <?php $websiteIds = $this->getAssignedWebsiteIds($varnish) ?>
-            <h2><?= $varnish->getIP() ?></h2>
+        <?php if ($this->user): ?>
 
             <div class="padded">
-                <table class="table table-striped">
-                    <tr>
-                        <th>Associated</th>
-                        <th>Name</th>
-                        <th>Hostname</th>
-                    </tr>
-                    <?php foreach ($this->getWebsites() as $website): /** @var \Snowdog\DevTest\Model\Website $website */ ?>
-                        <tr>
-                            <td><input type="checkbox" <?= in_array($website->getWebsiteId(), $websiteIds) ? 'checked="checked"' : '' ?>/></td>
-                            <td><?= $website->getName() ?></td>
-                            <td><?= $website->getHostname() ?></td>
-                        </tr>
-                    <?php endforeach ?>
-                </table>
+                <form class="form-inline" method="post" action="/varnish">
+                    <div class="form-group">
+                        <label for="exampleInputName2">IP</label>
+                        <input type="text" name="ip" class="form-control" id="exampleInputName2"
+                               placeholder="192.168.0.1">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Varnish</button>
+                </form>
             </div>
 
-        <?php endforeach; ?>
+
+            <?php foreach ($this->getVarnishes() as $varnish): /** @var \Snowdog\DevTest\Model\Varnish $varnish */ ?>
+                <?php $websiteIds = $this->getAssignedWebsiteIds($varnish) ?>
+                <h2 class="varnish-title"><?= $varnish->getIP() ?><a href="/varnish/<?= $varnish->getVarnishId() ?>/delete" class="btn btn-sm btn-danger">Delete</a></h2>
+
+                <div class="padded">
+                    <table class="table table-striped table-websites" data-id="<?= $varnish->getVarnishId() ?>">
+                        <tr>
+                            <th>Associated</th>
+                            <th>Name</th>
+                            <th>Hostname</th>
+                        </tr>
+                        <?php foreach ($this->getWebsites() as $website): /** @var \Snowdog\DevTest\Model\Website $website */ ?>
+                            <tr>
+                                <td><input type="checkbox" class="associate" <?= in_array($website->getWebsiteId(), $websiteIds) ? 'checked="checked"' : '' ?> data-id="<?= $website->getWebsiteId() ?>" /></td>
+                                <td><?= $website->getName() ?></td>
+                                <td><?= $website->getHostname() ?></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </table>
+                </div>
+
+            <?php endforeach; ?>
+
+        <?php endif; ?>
     </div>
 
 </div><!-- /.container -->
 
+<div class="container navbar-fixed-bottom" id="save-panel">
+    <a href="#" class="btn btn-sm btn-success btn-save pull-right">Save changes</a>
+</div>
+
+<script type="text/javascript" src="js/jquery-3.4.0.min.js"></script>
+<script>
+
+    (function($) {
+
+        var $panel = $('#save-panel');
+        var $alert = $('#alert');
+        var $tm    = null;
+
+        /**
+         * Confirm and redirect on remove varnish url
+         * @param e event
+         */
+        function remove(e) {
+            e.preventDefault();
+
+            if ( ! confirm('Are you sure?')) {
+                return;
+            }
+
+            window.location = $(this).attr('href');
+        }
+
+        /**
+         * Show / hide alert panel
+         * @param status boolean
+         * @param message string
+         */
+        function showAlert(status, message) {
+
+            if (message === undefined) {
+                clearInterval($tm);
+                $alert.removeClass('fade');
+                setTimeout(function() {
+                    $alert.removeClass('show').text('');
+                }, 300);
+                return;
+            }
+
+            $alert.text(message);
+
+            if (status) {
+                $alert.attr('class', 'alert alert-success');
+            } else {
+                $alert.attr('class', 'alert alert-danger');
+            }
+
+            clearInterval($tm);
+            $tm = setInterval(function() {
+                showAlert(false);
+            }, 3000);
+
+            $alert.addClass('show');
+            setTimeout(function() {
+                $alert.addClass('fade');
+            }, 1);
+        }
+
+        /**
+         * Save current assign changes
+         * @param e event
+         */
+        function save(e) {
+            e.preventDefault();
+
+            var data = {};
+
+            $('.table-websites').each(function(i, f) {
+                var id = parseInt($(f).attr('data-id'));
+                data[id] = { c: [], u: []};
+
+                $('.associate', $(f)).each(function(i, g) {
+                    var wid = parseInt($(g).attr('data-id'));
+
+                    if ($(g).is(':checked')) {
+                        data[id].c.push(wid);
+                        return;
+                    }
+
+                    data[id].u.push(wid);
+                });
+            });
+
+            $.ajax('/link', {
+                method  : 'POST',
+                data    : { servers: data }
+            }).done(function(response) {
+                showAlert(response.status === 'ok', response.message);
+            }).always(function () {
+                $panel.removeClass('show');
+            });
+        }
+
+        /**
+         * Check / uncheck checkbox of association
+         * @param e event
+         */
+        function check(e) {
+            var $this = $(this);
+
+            /** hide alert */
+            showAlert(false);
+
+            /** show panel */
+            if ($panel.hasClass('show')) {
+                return;
+            }
+
+            $panel.addClass('show');
+        }
+
+        /**
+         * Events
+         */
+        $(document).on('click', '.varnish-title .btn-danger', remove);
+        $(document).on('change', '.associate', check);
+        $panel.on('click', '.btn-save', save);
+
+    }(window.jQuery))
+
+</script>
 
 </body>
 </html>
