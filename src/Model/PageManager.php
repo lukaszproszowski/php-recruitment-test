@@ -7,7 +7,6 @@ use Snowdog\DevTest\Helper\Str;
 
 class PageManager
 {
-
     /**
      * @var Database|\PDO
      */
@@ -18,6 +17,11 @@ class PageManager
         $this->database = $database;
     }
 
+    /**
+     * Get all pages by given website
+     * @param Website $website
+     * @return Page[]
+     */
     public function getAllByWebsite(Website $website)
     {
         $websiteId = $website->getWebsiteId();
@@ -28,6 +32,11 @@ class PageManager
         return $query->fetchAll(\PDO::FETCH_CLASS, Page::class);
     }
 
+    /**
+     * Get all pages cunt for given user
+     * @param User $user
+     * @return int
+     */
     public function getAllUserPagesCount(User $user)
     {
         if ( ! $user) {
@@ -47,10 +56,15 @@ class PageManager
         return (int) $result['count'];
     }
 
+    /**
+     * Get least recently visited page for given user
+     * @param $user
+     * @return string
+     */
     public function getLeastRecentlyVisitedPage($user)
     {
         if ( ! $user) {
-            return 0;
+            return '0';
         }
 
         $userId = $user->getUserId();
@@ -68,10 +82,15 @@ class PageManager
         return Str::preparePopularityString($statement->fetch());
     }
 
+    /**
+     * Get most receltny visited page for given user
+     * @param $user
+     * @return int|string
+     */
     public function getMostRecentlyVisitedPage($user)
     {
         if ( ! $user) {
-            return 0;
+            return '0';
         }
 
         $userId = $user->getUserId();
@@ -89,6 +108,12 @@ class PageManager
         return Str::preparePopularityString($statement->fetch());
     }
 
+    /**
+     * Create page with url for given website
+     * @param Website $website
+     * @param $url
+     * @return int
+     */
     public function create(Website $website, $url)
     {
         $websiteId = $website->getWebsiteId();
@@ -100,11 +125,21 @@ class PageManager
         return $this->database->lastInsertId();
     }
 
+    /**
+     * Update page last warm date
+     * @param $pageId
+     * @param $date
+     */
     public function updatePageLastWarmDate($pageId, $date)
     {
         $this->database->prepare('UPDATE pages SET last_warm = ? WHERE page_id = ?')->execute([$date, $pageId]);
     }
 
+    /**
+     * Update number of page visits
+     * @param $pageId
+     * @param $oldValue
+     */
     public function updatePageVisitsValue($pageId, $oldValue)
     {
         $this->database->prepare('UPDATE pages SET visits = ? WHERE page_id = ?')->execute([$oldValue + 1, $pageId]);

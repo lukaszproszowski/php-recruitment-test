@@ -16,3 +16,50 @@ body {
 .padded {
     padding: 15px;
 }
+
+.varnish-title {
+    overflow: hidden;
+    position: relative;
+}
+
+.varnish-title .btn {
+    float: right;
+}
+
+#alert {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    z-index: 100;
+    opacity: 0;
+    display: none;
+    -webkit-transition: opacity 0.3s;
+    -moz-transition: opacity 0.3s;
+    -ms-transition: opacity 0.3s;
+    -o-transition: opacity 0.3s;
+    transition: opacity 0.3s;
+}
+
+#alert.show {
+    display: block;
+}
+
+#alert.fade {
+    opacity: 1;
+}
+
+#save-panel {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    background: #c7c7c76e;
+    bottom: -50px;
+    -webkit-transition: bottom 0.3s;
+    -moz-transition: bottom 0.3s;
+    -ms-transition: bottom 0.3s;
+    -o-transition: bottom 0.3s;
+    transition: bottom 0.3s;
+}
+
+#save-panel.show {
+    bottom: 0;
+}

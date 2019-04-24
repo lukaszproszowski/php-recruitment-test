@@ -2,8 +2,17 @@
 
 namespace Snowdog\DevTest\Helper;
 
-class Str {
-
+/**
+ * Helper class to operate with strings
+ * @package Snowdog\DevTest\Helper
+ */
+class Str
+{
+    /**
+     * Prepare popularity string
+     * @param $parts    array of strings
+     * @return string
+     */
 	public static function preparePopularityString($parts)
 	{
 		if (empty($parts)) {
