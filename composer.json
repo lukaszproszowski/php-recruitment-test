@@ -3,7 +3,8 @@
   "require": {
     "nikic/fast-route": "^1.0",
     "php-di/php-di": "^5.3",
-    "mnapoli/silly": "^1.3"
+    "symfony/console": "~2.6|~3.0",
+    "lukpro/php-recruitment-test-importer": "dev-master"
   },
   "autoload": {
     "files": [
@@ -13,5 +14,11 @@
     "psr-4": {
       "Snowdog\\DevTest\\": "src"
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/lukaszproszowski/php-recruitment-test-importer"
+    }
+  ]
 }

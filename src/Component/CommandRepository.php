@@ -2,16 +2,13 @@
 
 namespace Snowdog\DevTest\Component;
 
-
-use Silly\Application;
+use Symfony\Component\Console\Application;
 
 class CommandRepository
 {
     private static $instance = null;
-    private $commands = [];
-    const COMMAND = 'command';
-    const CLASS_NAME = 'class_name';
 
+    private $commands = [];
 
     /**
      * @return CommandRepository
@@ -24,24 +21,26 @@ class CommandRepository
         return self::$instance;
     }
 
-    public static function registerCommand($command , $className)
+    public static function registerCommand($className)
     {
         $instance = self::getInstance();
-        $instance->addCommand($command, $className);
+        $instance->addCommand($className);
     }
 
     public function applyCommands(Application $app)
     {
-        foreach ($this->commands as $command) {
-            $app->command($command[self::COMMAND], $command[self::CLASS_NAME]);
+        if (empty($this->commands)) {
+            return;
+        }
+
+        foreach ($this->commands as $class)
+        {
+            $app->add(new $class);
         }
     }
 
-    private function addCommand($command, $className)
+    private function addCommand($className)
     {
-        $this->commands[] = [
-            self::COMMAND => $command,
-            self::CLASS_NAME => $className,
-        ];
+        $this->commands[] = $className;
     }
 }

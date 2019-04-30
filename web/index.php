@@ -1,7 +1,11 @@
 <?php
+
 error_reporting(E_ALL);
+
 use Snowdog\DevTest\Component\Menu;
 use Snowdog\DevTest\Component\RouteRepository;
+
+define('APP_BASE_DIR', __DIR__ . '/../');
 
 session_start();
 

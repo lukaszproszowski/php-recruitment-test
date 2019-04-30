@@ -17,6 +17,14 @@ body {
     padding: 15px;
 }
 
+.padded .padded-title {
+    margin-bottom: 15px;
+    color: #585858;
+    font-size: 12px;
+    border-left: 3px #ddd solid;
+    padding-left: 7px;
+}
+
 .varnish-title {
     overflow: hidden;
     position: relative;
@@ -62,4 +70,20 @@ body {
 
 #save-panel.show {
     bottom: 0;
+}
+
+.form-inline .form-group {
+    margin-right: 20px;
+}
+
+.padded-info {
+    background: #eff7ff;
+}
+
+.padded-normal {
+    background: #f3f3f3;
+}
+
+.padded-lite {
+    background: #fbfbfb;
 }

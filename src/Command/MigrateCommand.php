@@ -2,16 +2,17 @@
 
 namespace Snowdog\DevTest\Command;
 
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Snowdog\DevTest\Core\Database;
 use Snowdog\DevTest\Core\Migration;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use DI\ContainerBuilder;
 
-class MigrateCommand
+class MigrateCommand extends SymfonyCommand
 {
-
     /**
      * @var Migration
      */
@@ -25,14 +26,25 @@ class MigrateCommand
      */
     private $database;
 
-    public function __construct(Migration $migration, QuestionHelper $helper, Database $database)
+    /**
+     * @inheritdoc
+     */
+    protected function configure()
     {
-        $this->migration = $migration;
-        $this->helper = $helper;
-        $this->database = $database;
+        $container = ContainerBuilder::buildDevContainer();
+        $this->migration = $container->get(Migration::class);
+        $this->helper = $container->get(QuestionHelper::class);
+        $this->database = $container->get(Database::class);
+
+        $this
+            ->setName('migrate_db')
+            ->setDescription('Migrate database to current version');
     }
 
-    public function __invoke(InputInterface $input, OutputInterface $output)
+    /**
+     * @inheritdoc
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->testConnection($input, $output);
 

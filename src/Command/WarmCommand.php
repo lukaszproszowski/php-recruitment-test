@@ -2,12 +2,17 @@
 
 namespace Snowdog\DevTest\Command;
 
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
+
 use Snowdog\DevTest\Model\VarnishManager;
 use Snowdog\DevTest\Model\PageManager;
 use Snowdog\DevTest\Model\WebsiteManager;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputArgument;
+use DI\ContainerBuilder;
 
-class WarmCommand
+class WarmCommand extends SymfonyCommand
 {
     /**
      * @var VarnishManager
@@ -22,15 +27,28 @@ class WarmCommand
      */
     private $pageManager;
 
-    public function __construct(VarnishManager $varnishManager, WebsiteManager $websiteManager, PageManager $pageManager)
+    /**
+     * @inheritdoc
+     */
+    protected function configure()
     {
-        $this->varnishManager = $varnishManager;
-        $this->websiteManager = $websiteManager;
-        $this->pageManager = $pageManager;
+        $container = ContainerBuilder::buildDevContainer();
+        $this->varnishManager = $container->get(VarnishManager::class);
+        $this->websiteManager = $container->get(WebsiteManager::class);
+        $this->pageManager = $container->get(PageManager::class);
+
+        $this
+            ->setName('warm')
+            ->setDescription('Warm cache for all pages of given website')
+            ->addArgument('id', InputArgument::REQUIRED, 'Website id');
     }
 
-    public function __invoke($id, OutputInterface $output)
+    /**
+     * @inheritdoc
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $id = $input->getArgument('id');
         $website = $this->websiteManager->getById($id);
 
         if (empty($website)) {

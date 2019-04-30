@@ -2,3 +2,5 @@ conf.ini
 vendor/
 web/.htaccess
 .idea/
+uploads/
+sitemap.xml

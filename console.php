@@ -1,12 +1,13 @@
 <?php
 
-use Silly\Application;
+use Symfony\Component\Console\Application;
 use Snowdog\DevTest\Component\CommandRepository;
 
-$container = require __DIR__ . '/app/bootstrap.php';
+define('APP_BASE_DIR', __DIR__ . '/');
+
+$container = require APP_BASE_DIR . 'app/bootstrap.php';
 
 $app = new Application();
-$app->useContainer($container, true);
 
 $commandRepository = CommandRepository::getInstance();
 $commandRepository->applyCommands($app);
