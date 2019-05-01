@@ -2,14 +2,11 @@
 
 namespace Snowdog\DevTest\Controller;
 
-use Snowdog\DevTest\Model\User;
-use Snowdog\DevTest\Model\UserManager;
 use Snowdog\DevTest\Model\WebsiteManager;
 use Snowdog\DevTest\Model\PageManager;
 
-class IndexAction
+class IndexAction extends BaseController
 {
-
     /**
      * @var WebsiteManager
      */
@@ -21,38 +18,44 @@ class IndexAction
     private $pageManager;
 
     /**
-     * @var User
+     * IndexAction constructor.
+     * @param WebsiteManager $websiteManager
+     * @param PageManager $pageManager
      */
-    private $user;
-
-    public function __construct(UserManager $userManager, WebsiteManager $websiteManager, PageManager $pageManager)
+    public function __construct(WebsiteManager $websiteManager, PageManager $pageManager)
     {
+        $this->onlyAuthorized();
         $this->websiteManager = $websiteManager;
         $this->pageManager = $pageManager;
-
-        if (isset($_SESSION['login'])) {
-            $this->user = $userManager->getByLogin($_SESSION['login']);
-        }
     }
 
+    /**
+     * @return array
+     */
     protected function getWebsites()
     {
-        if($this->user) {
-            return $this->websiteManager->getAllByUser($this->user);
-        } 
-        return [];
+        return $this->websiteManager->getAllByUser($this->user);
     }
 
+    /**
+     * @return int
+     */
     public function getAllUserPagesCount()
     {
         return $this->pageManager->getAllUserPagesCount($this->user);
     }
 
+    /**
+     * @return string
+     */
     public function getLeastRecentlyVisitedPage()
     {
         return $this->pageManager->getLeastRecentlyVisitedPage($this->user);
     }
 
+    /**
+     * @return int|string
+     */
     public function getMostRecentlyVisitedPage()
     {
         return $this->pageManager->getMostRecentlyVisitedPage($this->user);

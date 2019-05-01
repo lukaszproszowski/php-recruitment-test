@@ -2,9 +2,18 @@
 
 namespace Snowdog\DevTest\Controller;
 
-class RegisterFormAction
+class RegisterFormAction extends BaseController
 {
-    public function execute() {
+    /**
+     * RegisterFormAction constructor.
+     */
+    public function __construct()
+    {
+        $this->onlyGuest();
+    }
+
+    public function execute()
+    {
         require __DIR__ . '/../view/register.phtml';
     }
 }

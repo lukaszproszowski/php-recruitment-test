@@ -2,6 +2,10 @@
 
 namespace Snowdog\DevTest\Helper;
 
+/**
+ * Class WebsitesAndPages
+ * @package Snowdog\DevTest\Helper
+ */
 class WebsitesAndPages
 {
     /**

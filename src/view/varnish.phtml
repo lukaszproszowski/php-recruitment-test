@@ -54,12 +54,14 @@
                     <table class="table table-striped table-websites" data-id="<?= $varnish->getVarnishId() ?>">
                         <tr>
                             <th>Associated</th>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Hostname</th>
                         </tr>
                         <?php foreach ($this->getWebsites() as $website): /** @var \Snowdog\DevTest\Model\Website $website */ ?>
                             <tr>
                                 <td><input type="checkbox" class="associate" <?= in_array($website->getWebsiteId(), $websiteIds) ? 'checked="checked"' : '' ?> data-id="<?= $website->getWebsiteId() ?>" /></td>
+                                <td><?= $website->getWebsiteId() ?></td>
                                 <td><?= $website->getName() ?></td>
                                 <td><?= $website->getHostname() ?></td>
                             </tr>

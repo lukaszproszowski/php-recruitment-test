@@ -4,16 +4,20 @@ namespace Snowdog\DevTest\Controller;
 
 use Snowdog\DevTest\Model\UserManager;
 
-class RegisterAction
+class RegisterAction extends BaseController
 {
-
     /**
      * @var UserManager
      */
     private $userManager;
 
+    /**
+     * RegisterAction constructor.
+     * @param UserManager $userManager
+     */
     public function __construct(UserManager $userManager)
     {
+        $this->onlyGuest();
         $this->userManager = $userManager;
     }
 

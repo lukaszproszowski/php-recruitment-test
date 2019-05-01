@@ -2,26 +2,23 @@
 
 namespace Snowdog\DevTest\Controller;
 
-use Snowdog\DevTest\Model\UserManager;
-use Snowdog\DevTest\Model\Varnish;
 use Snowdog\DevTest\Model\VarnishManager;
-use Snowdog\DevTest\Model\Website;
 use Exception;
 
-class CreateVarnishLinkAction
+class CreateVarnishLinkAction extends BaseController
 {
-    /**
-     * @var UserManager
-     */
-    private $userManager;
     /**
      * @var VarnishManager
      */
     private $varnishManager;
 
-    public function __construct(UserManager $userManager, VarnishManager $varnishManager)
+    /**
+     * CreateVarnishLinkAction constructor.
+     * @param VarnishManager $varnishManager
+     */
+    public function __construct(VarnishManager $varnishManager)
     {
-        $this->userManager = $userManager;
+        $this->onlyAuthorized();
         $this->varnishManager = $varnishManager;
     }
 

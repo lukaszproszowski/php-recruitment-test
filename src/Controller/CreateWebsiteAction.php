@@ -2,23 +2,22 @@
 
 namespace Snowdog\DevTest\Controller;
 
-use Snowdog\DevTest\Model\UserManager;
 use Snowdog\DevTest\Model\WebsiteManager;
 
-class CreateWebsiteAction
+class CreateWebsiteAction extends BaseController
 {
-    /**
-     * @var UserManager
-     */
-    private $userManager;
     /**
      * @var WebsiteManager
      */
     private $websiteManager;
 
-    public function __construct(UserManager $userManager, WebsiteManager $websiteManager)
+    /**
+     * CreateWebsiteAction constructor.
+     * @param WebsiteManager $websiteManager
+     */
+    public function __construct(WebsiteManager $websiteManager)
     {
-        $this->userManager = $userManager;
+        $this->onlyAuthorized();
         $this->websiteManager = $websiteManager;
     }
 
@@ -27,17 +26,10 @@ class CreateWebsiteAction
         $name = $_POST['name'];
         $hostname = $_POST['hostname'];
 
-        if(!empty($name) && !empty($hostname)) {
-            if (isset($_SESSION['login'])) {
-                $user = $this->userManager->getByLogin($_SESSION['login']);
-                if ($user) {
-                    if ($this->websiteManager->create($user, $name, $hostname)) {
-                        $_SESSION['flash'] = 'Website ' . $name . ' added!';
-                    }
-                }
-            }
-        } else {
+        if(empty($name) || empty($hostname)) {
             $_SESSION['flash'] = 'Name and Hostname cannot be empty!';
+        } elseif ($this->websiteManager->create($this->user, $name, $hostname)) {
+            $_SESSION['flash'] = 'Website ' . $name . ' added!';
         }
 
         header('Location: /');

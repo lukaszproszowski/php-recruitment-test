@@ -2,8 +2,15 @@
 
 namespace Snowdog\DevTest\Controller;
 
-class LoginFormAction
+class LoginFormAction extends BaseController
 {
+    /**
+     * LoginFormAction constructor.
+     */
+    public function __construct()
+    {
+        $this->onlyGuest();
+    }
 
     public function execute()
     {

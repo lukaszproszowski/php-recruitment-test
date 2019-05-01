@@ -32,6 +32,23 @@
             <h1><?= $this->website->getName() ?></h1>
 
             <div class="padded">
+                <a href="/">&lsaquo;&nbsp;Back to websites</a>
+            </div>
+
+            <div class="padded padded-lite">
+                <div class="padded-title">Create page</div>
+                <form class="form-inline" method="post" action="/page">
+                    <div class="form-group">
+                        <label for="exampleInputName2">URL</label>
+                        <input type="text" name="url" class="form-control" id="exampleInputName2"
+                               placeholder="product/awsome/example.html">
+                    </div>
+                    <input type="hidden" name="website_id" value="<?= $this->website->getWebsiteId() ?>" />
+                    <button type="submit" class="btn btn-primary">Add Url</button>
+                </form>
+            </div>
+
+            <div class="padded">
                 <table class="table table-striped">
                     <tr>
                         <th>#</th>
@@ -48,17 +65,6 @@
                 </table>
             </div>
 
-            <div class="padded">
-                <form class="form-inline" method="post" action="/page">
-                    <div class="form-group">
-                        <label for="exampleInputName2">URL</label>
-                        <input type="text" name="url" class="form-control" id="exampleInputName2"
-                               placeholder="product/awsome/example.html">
-                    </div>
-                    <input type="hidden" name="website_id" value="<?= $this->website->getWebsiteId() ?>" />
-                    <button type="submit" class="btn btn-primary">Add Url</button>
-                </form>
-            </div>
         <?php endif ?>
     </div>
 

@@ -3,13 +3,11 @@
 namespace Snowdog\DevTest\Controller;
 
 use Snowdog\DevTest\Model\PageManager;
-use Snowdog\DevTest\Model\UserManager;
 use Snowdog\DevTest\Model\Website;
 use Snowdog\DevTest\Model\WebsiteManager;
 
-class VarnishAction
+class VarnishAction extends BaseController
 {
-
     /**
      * @var WebsiteManager
      */
@@ -19,36 +17,39 @@ class VarnishAction
      */
     private $pageManager;
     /**
-     * @var UserManager
-     */
-    private $userManager;
-    /**
      * @var Website
      */
     private $website;
 
-    public function __construct(UserManager $userManager, WebsiteManager $websiteManager, PageManager $pageManager)
+    /**
+     * VarnishAction constructor.
+     * @param WebsiteManager $websiteManager
+     * @param PageManager $pageManager
+     */
+    public function __construct(WebsiteManager $websiteManager, PageManager $pageManager)
     {
+        $this->onlyAuthorized();
         $this->websiteManager = $websiteManager;
         $this->pageManager = $pageManager;
-        $this->userManager = $userManager;
     }
 
+    /**
+     * @param $id website
+     */
     public function execute($id)
     {
-        if (isset($_SESSION['login'])) {
-            $user = $this->userManager->getByLogin($_SESSION['login']);
+        $website = $this->websiteManager->getById($id);
 
-            $website = $this->websiteManager->getById($id);
-
-            if ($website->getUserId() == $user->getUserId()) {
-                $this->website = $website;
-            }
+        if ($website->getUserId() == $this->user->getUserId()) {
+            $this->website = $website;
         }
 
         require __DIR__ . '/../view/website.phtml';
     }
 
+    /**
+     * @return array|\Snowdog\DevTest\Model\Page[]
+     */
     protected function getPages()
     {
         if($this->website) {

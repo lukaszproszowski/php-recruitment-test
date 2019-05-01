@@ -2,20 +2,23 @@
 
 namespace Snowdog\DevTest\Controller;
 
-use Snowdog\DevTest\Model\UserManager;
 use Snowdog\DevTest\Model\VarnishManager;
 use Exception;
 
-class CreateVarnishAction
+class CreateVarnishAction extends BaseController
 {
     /**
      * @var VarnishManager
      */
     private $varnishManager;
 
-    public function __construct(UserManager $userManager, VarnishManager $varnishManager)
+    /**
+     * CreateVarnishAction constructor.
+     * @param VarnishManager $varnishManager
+     */
+    public function __construct(VarnishManager $varnishManager)
     {
-        $this->userManager = $userManager;
+        $this->onlyAuthorized();
         $this->varnishManager = $varnishManager;
     }
 
@@ -45,8 +48,7 @@ class CreateVarnishAction
                 throw new Exception('Varnish server with given IP already exists / is not available!');
             }
 
-            $user = $this->userManager->getByLogin($_SESSION['login']);
-            $this->varnishManager->create($user, $ip);
+            $this->varnishManager->create($this->user, $ip);
             $msg = 'Varnish server was created!';
 
         } catch (Exception $ex) {

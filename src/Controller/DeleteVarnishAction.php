@@ -2,38 +2,38 @@
 
 namespace Snowdog\DevTest\Controller;
 
-use Snowdog\DevTest\Model\UserManager;
 use Snowdog\DevTest\Model\VarnishManager;
 
-class DeleteVarnishAction
+class DeleteVarnishAction extends BaseController
 {
     /**
      * @var VarnishManager
      */
     private $varnishManager;
 
-    public function __construct(UserManager $userManager, VarnishManager $varnishManager)
+    public function __construct(VarnishManager $varnishManager)
     {
-        $this->userManager = $userManager;
+        $this->onlyAuthorized();
         $this->varnishManager = $varnishManager;
     }
 
+    /**
+     * Delete varnish server
+     * @param $id
+     */
     public function execute($id)
     {
-        if (isset($_SESSION['login'])) {
-            $user = $this->userManager->getByLogin($_SESSION['login']);
-            $varnishes = $this->varnishManager->getAllByUser($user);
+        $varnishes = $this->varnishManager->getAllByUser($this->user);
 
-            foreach ($varnishes as $varnish) {
-                if ( ! $varnish->getVarnishId() === $id) {
-                    continue;
-                }
-
-                $ip = $varnish->getIp();
-                $this->varnishManager->delete($user, $id);
-                $_SESSION['flash'] = 'Varnish server ' . $ip . ' was deleted!';
-                break;
+        foreach ($varnishes as $varnish) {
+            if ( ! $varnish->getVarnishId() === $id) {
+                continue;
             }
+
+            $ip = $varnish->getIp();
+            $this->varnishManager->delete($this->user, $id);
+            $_SESSION['flash'] = 'Varnish server ' . $ip . ' was deleted!';
+            break;
         }
 
         header('Location: /varnishes');

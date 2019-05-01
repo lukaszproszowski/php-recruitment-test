@@ -2,39 +2,36 @@
 
 namespace Snowdog\DevTest\Controller;
 
-use Snowdog\DevTest\Model\UserManager;
 use Snowdog\DevTest\Model\Varnish;
 use Snowdog\DevTest\Model\VarnishManager;
 use Snowdog\DevTest\Model\WebsiteManager;
 
-class VarnishesAction
+class VarnishesAction extends BaseController
 {
-    /**
-     * @var UserManager
-     */
-    private $userManager;
     /**
      * @var VarnishManager
      */
     private $varnishManager;
-
-    /** @var \Snowdog\DevTest\Model\User $user */
-    private $user;
     /**
      * @var WebsiteManager
      */
     private $websiteManager;
 
-    public function __construct(UserManager $userManager, VarnishManager $varnishManager, WebsiteManager $websiteManager)
+    /**
+     * VarnishesAction constructor.
+     * @param VarnishManager $varnishManager
+     * @param WebsiteManager $websiteManager
+     */
+    public function __construct(VarnishManager $varnishManager, WebsiteManager $websiteManager)
     {
-        $this->userManager = $userManager;
+        $this->onlyAuthorized();
         $this->varnishManager = $varnishManager;
-        if(isset($_SESSION['login'])) {
-            $this->user = $this->userManager->getByLogin($_SESSION['login']);
-        }
         $this->websiteManager = $websiteManager;
     }
 
+    /**
+     * @return array|Varnish[]
+     */
     public function getVarnishes()
     {
         if($this->user) {
@@ -43,6 +40,9 @@ class VarnishesAction
         return [];
     }
 
+    /**
+     * @return array
+     */
     public function getWebsites()
     {
         if($this->user) {
@@ -51,6 +51,10 @@ class VarnishesAction
         return [];
     }
 
+    /**
+     * @param Varnish $varnish
+     * @return array
+     */
     public function getAssignedWebsiteIds(Varnish $varnish)
     {
         $websites = $this->varnishManager->getWebsites($varnish);

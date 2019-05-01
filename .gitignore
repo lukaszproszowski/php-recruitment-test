@@ -4,3 +4,4 @@ web/.htaccess
 .idea/
 uploads/
 sitemap.xml
+logs/*
